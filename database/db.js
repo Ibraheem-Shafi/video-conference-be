@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const Connection = async (username, password) => {
-    const URL = `mongodb+srv://${username}:${password}@cluster0.tlj7nn0.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+    const URL = `mongodb+srv://${username}:${password}@cluster0.uvotjb2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
     
     try{
         await mongoose.connect(URL, { useUnifiedTopology: true, useNewUrlParser: true })
