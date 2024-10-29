@@ -41,21 +41,16 @@ app.use((err, req, res, next) => {
   res.status(500).send('Internal Server Error');
 });
 
-// Socket.io events handling
 io.on('connection', (socket) => {
-  console.log('A user connected');
+  console.log('A user connected:', socket.id);
 
-  // Handle chat message event
-  socket.on('chatMessage', (message) => {
-    console.log('Received message:', message);
-
-    // Broadcast the message to all connected clients
-    io.emit('chatMessage', message);
+  // Relay signaling data for WebRTC
+  socket.on('signal', (data) => {
+    io.to(data.to).emit('signal', { from: socket.id, signalData: data.signalData });
   });
 
-  // Disconnect event
   socket.on('disconnect', () => {
-    console.log('A user disconnected');
+    console.log('User disconnected:', socket.id);
   });
 });
 
