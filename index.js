@@ -41,18 +41,21 @@ app.use((err, req, res, next) => {
   res.status(500).send('Internal Server Error');
 });
 
-io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
+io.on("connection", (socket) => {
+	socket.emit("me", socket.id)
 
-  // Relay signaling data for WebRTC
-  socket.on('signal', (data) => {
-    io.to(data.to).emit('signal', { from: socket.id, signalData: data.signalData });
-  });
+	socket.on("disconnect", () => {
+		socket.broadcast.emit("callEnded")
+	})
 
-  socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
-  });
-});
+	socket.on("callUser", (data) => {
+		io.to(data.userToCall).emit("callUser", { signal: data.signalData, from: data.from, name: data.name })
+	})
+
+	socket.on("answerCall", (data) => {
+		io.to(data.to).emit("callAccepted", data.signal)
+	})
+})
 
 // Start the server
 server.listen(PORT, () => {
